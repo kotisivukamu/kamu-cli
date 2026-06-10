@@ -5,11 +5,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/charmbracelet/huh"
-
 	"github.com/kotisivukamu/kamu-cli/internal/client/kamuid"
 	"github.com/kotisivukamu/kamu-cli/internal/config"
 	"github.com/kotisivukamu/kamu-cli/internal/iostreams"
+	"github.com/kotisivukamu/kamu-cli/internal/picker"
 )
 
 func runPicker(ctx context.Context) error {
@@ -31,34 +30,30 @@ func runPicker(ctx context.Context) error {
 		return nil
 	}
 
-	opts := make([]huh.Option[string], 0, len(claims.Organizations))
+	opts := make([]picker.Option[string], 0, len(claims.Organizations))
 	for _, o := range claims.Organizations {
-		label := fmt.Sprintf("%s — %s (%s)", o.Slug, o.Name, o.Role)
+		label := fmt.Sprintf("%s — %s", o.Slug, o.Name)
 		if o.Slug == cfg.ActiveOrg {
 			label += "  •  current"
 		}
-		opts = append(opts, huh.NewOption(label, o.Slug))
+		opts = append(opts, picker.Option[string]{
+			Value:       o.Slug,
+			Label:       label,
+			Description: fmt.Sprintf("role: %s", o.Role),
+		})
 	}
 
-	picked := cfg.ActiveOrg
-	if picked == "" {
-		picked = claims.Organizations[0].Slug
+	picked, err := picker.Pick(ctx, picker.Config[string]{
+		Title:       "Active organization",
+		Description: "Type to filter, enter to select, esc to cancel.",
+		Options:     opts,
+		Default:     cfg.ActiveOrg,
+	})
+	if errors.Is(err, picker.ErrCanceled) {
+		return nil
 	}
-
-	form := huh.NewForm(
-		huh.NewGroup(
-			huh.NewSelect[string]().
-				Title("Active organization").
-				Options(opts...).
-				Value(&picked),
-		),
-	).WithShowHelp(true)
-
-	if err := form.RunWithContext(ctx); err != nil {
-		if errors.Is(err, huh.ErrUserAborted) || errors.Is(err, context.Canceled) {
-			return nil
-		}
-		return fmt.Errorf("picker: %w", err)
+	if err != nil {
+		return err
 	}
 
 	if picked == cfg.ActiveOrg {
