@@ -1,12 +1,19 @@
 # kamu
 
-Unified CLI for the Kamu platform — drive **kamudb** (databases), **kamubee** (apps), and **kamudns** (DNS) from one binary with one login against **kamuid**.
+Unified CLI for the Kamu platform — drive **kamudb** (databases), **kamubee** (apps), **kamudns** (DNS), and **kamustatus** (uptime monitoring) from one binary with one login against **kamuid**.
 
 ```
 kamu auth login
 kamu db list
 kamu bee apps
 kamu dns zones
+kamu status projects list
+```
+
+`kamu status` talks to [kamustatus](https://github.com/kontakto-fi/kamustatus). Until [kamustatus#5](https://github.com/kontakto-fi/kamustatus/issues/5) lands it needs a project-scoped key:
+
+```sh
+export KAMU_KAMUSTATUS_API_KEY=km_...
 ```
 
 ## Install

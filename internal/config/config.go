@@ -51,10 +51,11 @@ func (c *Config) ResolveClientID() string {
 }
 
 type Endpoints struct {
-	Kamuid  string `yaml:"kamuid,omitempty"`
-	Kamudb  string `yaml:"kamudb,omitempty"`
-	Kamubee string `yaml:"kamubee,omitempty"`
-	Kamudns string `yaml:"kamudns,omitempty"`
+	Kamuid     string `yaml:"kamuid,omitempty"`
+	Kamudb     string `yaml:"kamudb,omitempty"`
+	Kamubee    string `yaml:"kamubee,omitempty"`
+	Kamudns    string `yaml:"kamudns,omitempty"`
+	Kamustatus string `yaml:"kamustatus,omitempty"`
 }
 
 func DefaultPath() (string, error) {

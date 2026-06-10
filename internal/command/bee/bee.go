@@ -15,7 +15,7 @@ func New() *cobra.Command {
 		stub("apps", "List apps", "M4"),
 		stub("deploy", "Deploy a release from kamu.toml", "M4"),
 		stub("status", "Show app status", "M4"),
-		stub("logs", "Stream app logs", "M4"),
+		newLogsCmd(),
 		stub("destroy", "Destroy an app", "M4"),
 	)
 	return cmd

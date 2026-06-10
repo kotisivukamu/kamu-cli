@@ -8,6 +8,7 @@ import (
 	"github.com/kotisivukamu/kamu-cli/internal/command/db"
 	"github.com/kotisivukamu/kamu-cli/internal/command/dns"
 	"github.com/kotisivukamu/kamu-cli/internal/command/orgs"
+	"github.com/kotisivukamu/kamu-cli/internal/command/status"
 	"github.com/kotisivukamu/kamu-cli/internal/command/version"
 )
 
@@ -41,6 +42,7 @@ func New(bi BuildInfo) *cobra.Command {
 	add(db.New(), "platform")
 	add(bee.New(), "platform")
 	add(dns.New(), "platform")
+	add(status.New(), "platform")
 	add(auth.New(), "account")
 	add(orgs.New(), "account")
 	add(version.New(bi.Version, bi.Commit, bi.Date), "meta")
