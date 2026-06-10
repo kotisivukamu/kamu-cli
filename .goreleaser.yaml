@@ -1,0 +1,68 @@
+version: 2
+
+project_name: kamu
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: kamu
+    main: ./cmd/kamu
+    binary: kamu
+    env:
+      - CGO_ENABLED=0
+    goos: [darwin, linux]
+    goarch: [amd64, arm64]
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X main.version={{ .Version }}
+      - -X main.commit={{ .Commit }}
+      - -X main.date={{ .CommitDate }}
+
+archives:
+  - id: kamu
+    name_template: "kamu_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    formats: [tar.gz]
+    files:
+      - README.md
+
+checksum:
+  name_template: "checksums.txt"
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  use: github
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^chore:"
+      - "^ci:"
+      - "Merge pull request"
+
+release:
+  github:
+    owner: kotisivukamu
+    name: kamu-cli
+  draft: false
+  prerelease: auto
+  name_template: "v{{ .Version }}"
+
+homebrew_casks:
+  - name: kamu
+    repository:
+      owner: kotisivukamu
+      name: homebrew-tap
+      branch: main
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    homepage: "https://github.com/kotisivukamu/kamu-cli"
+    description: "Unified CLI for the Kamu platform — drive kamudb, kamubee, and kamudns with one auth"
+    commit_author:
+      name: kamu-release-bot
+      email: release-bot@kotisivukamu.fi
+    commit_msg_template: "kamu {{ .Tag }}"
