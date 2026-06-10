@@ -13,7 +13,10 @@ import (
 	"github.com/kotisivukamu/kamu-cli/internal/iostreams"
 )
 
-const defaultScope = "openid profile email offline_access"
+// kamuid prod discovery doesn't list "organizations" in scopes_supported,
+// but the server still honors it and emits the claim. We need it for M2
+// (`kamu orgs ...`) and whoami's org count, so request it explicitly.
+const defaultScope = "openid profile email offline_access organizations"
 
 type loginFlags struct {
 	scope     string
